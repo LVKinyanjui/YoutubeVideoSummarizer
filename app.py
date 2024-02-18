@@ -1,6 +1,5 @@
 # %%
 import gradio as gr
-from IPython.display import Markdown, display
 
 from youtube_comments import main as get_comments
 from summarizer import summarize
