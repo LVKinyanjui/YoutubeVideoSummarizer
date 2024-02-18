@@ -3,7 +3,7 @@ from tqdm import tqdm
 import google.generativeai as genai
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 
-genai.configure(api_key=os.getenv("GOOGLE_KEY"))
+genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
 
 def summarize(docs, user_instructions=None, chunk_size=30000, chunk_overlap=100, api_call_limit=20, verbose=True):
     
