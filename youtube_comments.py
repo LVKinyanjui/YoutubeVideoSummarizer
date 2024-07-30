@@ -64,7 +64,7 @@ def main(video_id):
     def get_comment_text(video_id):
         res = get_comment_threads(video_id)
         comments = extract_key_from_json(res, 'textOriginal')
-        return '\n'.join(comments)
+        return '\n\n'.join(comments)
     
    
     return get_comment_text(video_id)
