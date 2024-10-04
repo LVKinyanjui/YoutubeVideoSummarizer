@@ -26,7 +26,6 @@ def refine(text: str, prompt=None, refine_prompt=None) -> str:
                         metadata = {"source": "local"})
         split_docs.append(page)
 
-    output_key = "output_text"
 
     if prompt is None:
         prompt = """
@@ -34,6 +33,10 @@ def refine(text: str, prompt=None, refine_prompt=None) -> str:
                         WHile maintaining lower level detail
                         
                         TEXT: {text}
+
+                        Begin by summarizing the topic at hand briefly
+                        in the same way an abstract explains a paper
+
                         SUMMARY:
                         """
 
@@ -43,19 +46,27 @@ def refine(text: str, prompt=None, refine_prompt=None) -> str:
 
     if refine_prompt is None:
         refine_prompt = """
-                    Write a comprehensive summary of the following text delimited by triple backquotes.
-                    Your goal will be to give a high level overview while also expounding on some finer details of the text
+            You are tasked with refining and improving an existing summary. We have an initial summary that is accurate but may lack details from the new context below.
 
-                    ```{text}```
-                    
-                    Have your answer in about 1500 words
-                    """
+            ---
+            Existing Summary:
+            {existing_answer}
+
+            New Context:
+            {text}
+            ---
+
+            Please refine the existing summary by incorporating relevant information from the new context. Ensure the refined summary remains clear, concise, and cohesive. If the new context does not provide useful details, keep the original summary unchanged. Avoid repeating information unnecessarily. Return the improved summary below.
+            s
+            """
 
 
     refine_template = PromptTemplate(
-        template=refine_prompt, input_variables=["text"]
+        template=refine_prompt, input_variables=["text", "existing_answer"]
     )
 
+    output_key = "output_text"
+    
     # Load refine chain
     chain = load_summarize_chain(
         llm=llm,
