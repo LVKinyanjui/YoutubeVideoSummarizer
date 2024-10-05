@@ -29,16 +29,30 @@ def refine(text: str, prompt=None, refine_prompt=None, chunk_size=16000, ) -> st
 
     if prompt is None:
         prompt = """
-                        Please provide an extensive summary of text to be provided below.
-                        WHile maintaining lower level detail
+        Please read the following text carefully and write a clear, concise summary. Focus on capturing the most important points, key arguments, or essential information while excluding unnecessary details.
 
-                        Begin by summarizing the topic at hand briefly
-                        in the same way an abstract explains a paper
+        ---
+        Text:
+        {text}
+        ---
 
-                        TEXT: {text}
+        Summary:
 
-                        SUMMARY:
-                        """
+        """
+
+        # TODO: Have select boxes to pick what kind of summary it should be
+        # This should be an article summary
+        # prompt = """
+        #                 Please provide an extensive summary of text to be provided below.
+        #                 WHile maintaining lower level detail
+
+        #                 Begin by summarizing the topic at hand briefly
+        #                 in the same way an abstract explains a paper
+
+        #                 TEXT: {text}
+
+        #                 SUMMARY:
+        #                 """
 
     question_prompt = PromptTemplate(
         template=prompt, input_variables=["text"]
