@@ -9,6 +9,11 @@ st.write("## Youtube Comment Summaries 💭")
 def summarize(comments):
     return refine(comments)
 
+@st.cache_data
+def extract_comments(url):
+    video_id = extract_video_id(url)
+    return get_comments(video_id)
+
 url_input = st.text_input('Enter your youtube url and press ENTER')
 summary_button = st.button("Summarize")
 
@@ -19,10 +24,9 @@ st.markdown(st.session_state.summary)
 
 with st.expander("Raw Comments"):
     if url_input:
-        video_id = extract_video_id(url_input)
-        comments = get_comments(video_id)
+        comments = extract_comments(url_input)
 
         if summary_button:
             st.session_state.summary = summarize(comments)
 
-        comments
+        st.markdown(comments)
