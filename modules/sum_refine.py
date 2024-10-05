@@ -9,13 +9,13 @@ google_api_key = os.getenv("GOOGLE_API_KEY")
 
 llm = ChatGoogleGenerativeAI(model="gemini-pro", api_key=google_api_key)
 
-def refine(text: str, prompt=None, refine_prompt=None) -> str:
+def refine(text: str, prompt=None, refine_prompt=None, chunk_size=16000, ) -> str:
     """
         use the refine method to summarize text. More can be learned here: 
             https://python.langchain.com/v0.1/docs/use_cases/summarization/#option-3-refine
     """
     text_splitter = RecursiveCharacterTextSplitter(separators=["\n\n\n", "\n\n", "\n"], 
-                                                #    chunk_size=128, chunk_overlap=0
+                                                   chunk_size=chunk_size, chunk_overlap=0
                                                    )
     split_texts = text_splitter.split_text(text)
 
@@ -29,13 +29,13 @@ def refine(text: str, prompt=None, refine_prompt=None) -> str:
 
     if prompt is None:
         prompt = """
-                        Please provide a very comprehensive summary of the following text.
+                        Please provide an extensive summary of text to be provided below.
                         WHile maintaining lower level detail
-                        
-                        TEXT: {text}
 
                         Begin by summarizing the topic at hand briefly
                         in the same way an abstract explains a paper
+
+                        TEXT: {text}
 
                         SUMMARY:
                         """
@@ -81,26 +81,32 @@ def refine(text: str, prompt=None, refine_prompt=None) -> str:
     return result[output_key]
 
 if __name__ == "__main__":
-    long_text = """
-        And Hector quickly reached for his son. But the boy
-        recoiled, crying out to his nurse,
-        terrified by his father’s bronze-encased appearance—
-        the crest of the horsehair helmet
-        shone so bright it frightened him.
-        At that, Hector and his wife both burst out laughing,
-        and from his head Hector lifted off the helmet,
-        and set it on the ground, all shimmering with light.
-        Then he kissed his dear son, tossing him in his arms,
-        lifting a prayer to Zeus and the other gods:
-        'Zeus, and all gods, grant this boy of mine
-        to be, like me, preeminent in Troy,
-        strong and brave, and ruling Ilium with might.
-        Then one day men will say of him,
-        as he returns from war, bearing the bloodstained gear of slaughtered foes,
-        "A far better man than his father!"'
-        And Hector placed his son in his wife's arms,
-        and she embraced him, smiling through her tears.
-    """
+
+    try:
+        with open("data/sample.txt", encoding="utf-8") as fp:
+            long_text = fp.read()
+    except Exception as e:
+        print(f"Encountered the following error while reading file: {e}")
+        long_text = """
+            And Hector quickly reached for his son. But the boy
+            recoiled, crying out to his nurse,
+            terrified by his father’s bronze-encased appearance—
+            the crest of the horsehair helmet
+            shone so bright it frightened him.
+            At that, Hector and his wife both burst out laughing,
+            and from his head Hector lifted off the helmet,
+            and set it on the ground, all shimmering with light.
+            Then he kissed his dear son, tossing him in his arms,
+            lifting a prayer to Zeus and the other gods:
+            'Zeus, and all gods, grant this boy of mine
+            to be, like me, preeminent in Troy,
+            strong and brave, and ruling Ilium with might.
+            Then one day men will say of him,
+            as he returns from war, bearing the bloodstained gear of slaughtered foes,
+            "A far better man than his father!"'
+            And Hector placed his son in his wife's arms,
+            and she embraced him, smiling through her tears.
+        """
 
     print(refine(long_text))
 
