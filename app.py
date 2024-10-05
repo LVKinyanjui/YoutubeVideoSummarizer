@@ -1,7 +1,7 @@
 import streamlit as st
-from youtube_comments import main as get_comments
-from custom import extract_video_id
-from sum_refine import refine
+from modules.youtube_comments import main as get_comments
+from modules.custom import extract_video_id
+from modules.sum_refine import refine
 
 st.write("## Youtube Comment Summaries 💭")
 
