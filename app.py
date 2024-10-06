@@ -12,6 +12,9 @@ if "summary" not in st.session_state:
 
 @st.cache_data
 def summarize(comments):
+    if comments == "":
+        st.warning("Press ENTER to get comments before attempting to summarize")
+        return ""
     st.session_state.summary = refine(comments)
 
 @st.cache_data
