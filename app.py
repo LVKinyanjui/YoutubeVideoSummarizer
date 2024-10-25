@@ -2,7 +2,7 @@ import streamlit as st
 from modules.youtube_comments import main as get_comments
 from modules.custom import extract_video_id
 from modules.sum_refine import refine
-# from modules.clustering import show_text_clusters
+from modules.clustering import show_text_clusters
 
 st.write("## Youtube Comment Summaries 💭")
 
@@ -24,6 +24,10 @@ def extract_comments(url):
     video_id = extract_video_id(url)
     return get_comments(video_id)
 
+@st.cache_data
+def visualize_comments(comments):
+    return show_text_clusters(comments)
+
 url_input = st.text_input('Enter your youtube url and press ENTER')
 
 if st.button("Summarize"):
@@ -42,3 +46,9 @@ with st.expander("Raw Comments"):
 
         # if st.session_state.comments != "":
         #     if st.button("Visualize Comments"):
+
+with st.expander("Plots"):
+    if len(st.session_state.comments) > 0:
+        if st.button("Visualize"):
+            fig = visualize_comments(st.session_state.comments)
+            st.pyplot(fig)
