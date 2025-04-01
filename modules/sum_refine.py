@@ -7,7 +7,7 @@ from langchain_google_genai import ChatGoogleGenerativeAI
 import os
 google_api_key = os.getenv("GOOGLE_API_KEY")
 
-llm = ChatGoogleGenerativeAI(model="gemini-pro", api_key=google_api_key)
+llm = ChatGoogleGenerativeAI(model="gemini-2.0-flash", api_key=google_api_key)
 
 def refine(text: str, prompt=None, refine_prompt=None, chunk_size=16000, ) -> str:
     """
