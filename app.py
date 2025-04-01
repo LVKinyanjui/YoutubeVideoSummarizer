@@ -1,7 +1,7 @@
 import streamlit as st
 from modules.youtube_comments import main as get_comments
 from modules.custom import extract_video_id
-from modules.sum_refine import refine
+# from modules.sum_refine import refine
 from modules.clustering import show_text_clusters
 
 st.write("## Youtube Comment Summaries 💭")
@@ -11,13 +11,13 @@ if "comments" not in st.session_state:
 if "summary" not in st.session_state:
     st.session_state["summary"] = ""
 
-@st.cache_data
-def summarize(comments):
-    if len(comments) == 0:
-        st.warning("Press ENTER to get comments before attempting to summarize")
-        return ""
-    comments = "\n\n".join(comments)
-    st.session_state.summary = refine(comments)
+# @st.cache_data
+# def summarize(comments):
+#     if len(comments) == 0:
+#         st.warning("Press ENTER to get comments before attempting to summarize")
+#         return ""
+#     comments = "\n\n".join(comments)
+#     st.session_state.summary = refine(comments)
 
 @st.cache_data
 def extract_comments(url):
@@ -30,9 +30,9 @@ def visualize_comments(comments):
 
 url_input = st.text_input('Enter your youtube url and press ENTER')
 
-if st.button("Summarize"):
-    summarize(st.session_state.comments)
-    st.markdown(st.session_state.summary)
+# if st.button("Summarize"):
+#     summarize(st.session_state.comments)
+#     st.markdown(st.session_state.summary)
 
 with st.expander("Raw Comments"):
     if url_input:
