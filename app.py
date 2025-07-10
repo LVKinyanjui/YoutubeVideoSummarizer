@@ -6,6 +6,12 @@ from modules.clustering import show_text_clusters
 
 st.write("## Youtube Comment Summaries 💭")
 
+st.write("""
+### TODO
+- Better comment space separation
+- Display commenter's username alongside comment
+""")
+
 if "comments" not in st.session_state:
     st.session_state["comments"] = list()
 if "summary" not in st.session_state:
