@@ -1,15 +1,16 @@
 import streamlit as st
-from modules.youtube_comments import main as get_comments
+from modules.youtube_comments import fetch_youtube_comments as get_comments
 from modules.custom import extract_video_id
-# from modules.sum_refine import refine
-from modules.clustering import show_text_clusters
 
-st.write("## Youtube Comment Summaries 💭")
+st.set_page_config(
+    page_title="YouTube Video Comment Explorer",
+    page_icon="💬",
+    layout="centered"
+)
 
-st.write("""
-### TODO
-- Better comment space separation
-- Display commenter's username alongside comment
+st.title("YouTube Video Comment Explorer")
+st.markdown("""
+#### Instantly get all comments from a video without the need for infinite scrolling.
 """)
 
 if "comments" not in st.session_state:
@@ -17,44 +18,30 @@ if "comments" not in st.session_state:
 if "summary" not in st.session_state:
     st.session_state["summary"] = ""
 
-# @st.cache_data
-# def summarize(comments):
-#     if len(comments) == 0:
-#         st.warning("Press ENTER to get comments before attempting to summarize")
-#         return ""
-#     comments = "\n\n".join(comments)
-#     st.session_state.summary = refine(comments)
-
 @st.cache_data
 def extract_comments(url):
     video_id = extract_video_id(url)
     return get_comments(video_id)
 
-@st.cache_data
-def visualize_comments(comments):
-    return show_text_clusters(comments)
 
 url_input = st.text_input('Enter your youtube url and press ENTER')
 
-# if st.button("Summarize"):
-#     summarize(st.session_state.comments)
-#     st.markdown(st.session_state.summary)
 
 with st.expander("Raw Comments"):
     if url_input:
         st.session_state.comments = extract_comments(url_input)
 
-        # if summary_button:
-        #     st.session_state.summary = summarize(comments)
+        for comment in st.session_state.comments:
+            with st.container():
+                col1, col2 = st.columns([1, 12])
+                with col1:
+                    if comment['profile_image']:
+                        st.image(comment['profile_image'], width=40)
+                with col2:
+                    st.markdown(f"**{comment['author']}**  ")
+                    st.markdown(f"<span style='color:gray;font-size:12px'>{comment['published_at'][:10]}</span>", unsafe_allow_html=True)
+                    st.markdown(f"{comment['text']}")
+                    if comment['like_count']:
+                        st.markdown(f"<span style='color:#888;font-size:11px'>👍 {comment['like_count']}</span>", unsafe_allow_html=True)
+                st.markdown("---")
 
-        text = "\n\n".join(st.session_state.comments)
-        st.markdown(text)
-
-        # if st.session_state.comments != "":
-        #     if st.button("Visualize Comments"):
-
-with st.expander("Plots"):
-    if len(st.session_state.comments) > 0:
-        if st.button("Visualize"):
-            fig = visualize_comments(st.session_state.comments)
-            st.pyplot(fig)

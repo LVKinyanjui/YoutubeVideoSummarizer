@@ -1,6 +1,13 @@
 import os
+from pathlib import Path
 import pandas as pd
 from googleapiclient.discovery import build
+from dotenv import load_dotenv
+
+# Load environment variables from .env if it exists
+env_path = Path(__file__).parent.parent / '.env'
+if env_path.exists():
+    load_dotenv(dotenv_path=env_path)
 
 youtube = build("youtube", "v3", developerKey=os.getenv('YOUTUBE_API_KEY'))
 
@@ -58,15 +65,25 @@ def get_comment_threads(video_id):
     return comments
 
 
-def main(video_id):
+def fetch_youtube_comments(video_id):
     res = get_comment_threads(video_id)
-    comments: list = extract_key_from_json(res, 'textOriginal')
-    # return '\n\n'.join(comments)
+    # Extract relevant metadata for each comment
+    comments = []
+    for item in res:
+        snippet = item['snippet']['topLevelComment']['snippet']
+        comment = {
+            'text': snippet.get('textOriginal', ''),
+            'author': snippet.get('authorDisplayName', ''),
+            'published_at': snippet.get('publishedAt', ''),
+            'profile_image': snippet.get('authorProfileImageUrl', ''),
+            'like_count': snippet.get('likeCount', 0)
+        }
+        comments.append(comment)
     return comments
     
 
 
 if __name__ == '__main__':
-    print(main('-wlZY4tfGMY'))
+    print(fetch_youtube_comments('-wlZY4tfGMY'))
 
 
